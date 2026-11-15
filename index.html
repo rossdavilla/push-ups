@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Push-Ups</title>
+<meta name="description" content="A six-week push-up plan that shows today's workout, logs your sets, and times your rest.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Push-Ups">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{
+  --bg:#f2f2f7; --card:#fff; --card2:#f6f6f9; --text:#111114; --muted:#6c6c72; --line:rgba(60,60,67,.14);
+  --accent:#e8590c; --good:#2b9348; --good-bg:rgba(43,147,72,.12);
+  --c-strength:#e8590c; --c-volume:#2b9348; --c-endurance:#1c6fd6; --c-easy:#7d8590; --c-test:#a23cc4; --c-rest:#a9b0b8;
+  --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04);
+  --r:18px;
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#000; --card:#1c1c1e; --card2:#2a2a2d; --text:#f2f2f7; --muted:#98989f; --line:rgba(255,255,255,.12);
+    --accent:#ff8a3d; --good:#4cd07a; --good-bg:rgba(76,208,122,.15);
+    --c-strength:#ff8a3d; --c-volume:#4cd07a; --c-endurance:#5aa9ff; --c-easy:#a0a7b0; --c-test:#d27df0; --c-rest:#6e737a;
+    --shadow:none;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.app{max-width:560px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 8px) 16px calc(env(safe-area-inset-bottom) + 96px)}
+/* header */
+.top{display:flex;align-items:center;gap:8px;min-height:56px;margin-bottom:6px}
+.top h2{margin:0;font-size:28px;letter-spacing:-.02em;flex:1}
+.datenav{display:flex;align-items:center;flex:1;gap:4px}
+.datenav .dt{flex:1;text-align:center;line-height:1.15}
+.datenav .dt b{display:block;font-size:22px;letter-spacing:-.01em}
+.datenav .dt span{font-size:14px;color:var(--muted)}
+.iconbtn{width:44px;height:44px;border-radius:50%;border:0;background:var(--card);box-shadow:var(--shadow);display:grid;place-items:center;font-size:22px;color:var(--muted)}
+.pill{border:0;background:var(--accent);color:#fff;border-radius:99px;padding:6px 12px;font-size:14px;font-weight:600}
+.pill.ghost{background:var(--card2);color:var(--text)}
+/* cards */
+.card{background:var(--card);border-radius:var(--r);padding:16px;margin:0 0 12px;box-shadow:var(--shadow)}
+.session{position:relative;overflow:hidden;padding-top:18px}
+.session::before{content:"";position:absolute;left:0;top:0;right:0;height:5px;background:var(--tc)}
+.eyebrow{font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;gap:6px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--tc,var(--c-rest));display:inline-block;flex:none}
+.session h1{margin:6px 0 0;font-size:30px;letter-spacing:-.02em;color:var(--tc)}
+.big{font-size:52px;font-weight:700;letter-spacing:-.03em;line-height:1.05;margin:4px 0 6px;font-variant-numeric:tabular-nums}
+.big small{font-size:20px;font-weight:600;color:var(--muted);letter-spacing:0}
+.how{margin:0;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chip{font-size:13px;font-weight:600;padding:4px 10px;border-radius:99px;background:var(--card2);color:var(--muted)}
+.chip.up{background:var(--good-bg);color:var(--good)}
+/* sets */
+.sets h3,.card h3{margin:0 0 10px;font-size:17px}
+.set{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.set:first-of-type{border-top:0}
+.set .lbl{flex:1;font-weight:600}
+.set .lbl small{display:block;font-weight:400;color:var(--muted);font-size:13px}
+.stepper{display:flex;align-items:center;background:var(--card2);border-radius:12px}
+.stepper button{width:44px;height:44px;border:0;background:none;font-size:24px;line-height:1;color:var(--text)}
+.stepper .val{min-width:40px;text-align:center;font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.check{width:48px;height:48px;border-radius:50%;border:2px solid var(--line);background:none;display:grid;place-items:center;color:transparent;flex:none;transition:all .15s}
+.check svg{width:24px;height:24px}
+.set.done .check{background:var(--good);border-color:var(--good);color:#fff}
+.set.done .val{color:var(--good)}
+.field{display:block;margin:0 0 12px}
+.field span{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);background:var(--card2);border-radius:12px;padding:10px 12px;font-size:16px}
+.field textarea{min-height:60px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:14px;font-size:17px;font-weight:600;background:var(--accent);color:#fff;margin-top:8px}
+.btn.sec{background:var(--card2);color:var(--text)}
+.btn.danger{background:none;color:#d33;border:1px solid var(--line)}
+.btn:disabled{opacity:.5}
+.donebar{display:flex;align-items:center;gap:10px;margin-top:12px;padding:12px;border-radius:14px;background:var(--good-bg);color:var(--good);font-weight:600}
+.donebar svg{width:22px;height:22px;flex:none}
+.note{font-size:14px;color:var(--muted);margin:10px 0 0}
+.linkbtn{border:0;background:none;color:var(--accent);font-weight:600;padding:8px 0;font-size:15px}
+/* test */
+.testin{display:flex;gap:10px;align-items:center}
+.testin input{flex:1;font-size:40px;font-weight:700;text-align:center;padding:8px;border-radius:14px;border:1px solid var(--line);background:var(--card2);width:100%}
+.testin .btn{width:auto;margin:0;padding:18px 20px}
+/* week strip */
+.strip{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.strip button{border:0;background:none;padding:6px 0;border-radius:12px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:var(--muted)}
+.strip button.sel{background:var(--card2);color:var(--text);font-weight:700}
+.strip .bub{width:30px;height:30px;border-radius:50%;border:2px solid var(--tc);display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--tc)}
+.strip .bub.fill{background:var(--tc);color:#fff}
+.strip .bub.restb{border-style:dashed;border-color:var(--c-rest);color:var(--c-rest)}
+.strip .today .d{color:var(--accent);font-weight:700}
+/* plan */
+details.week{padding:0}
+details.week summary{list-style:none;padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer}
+details.week summary::-webkit-details-marker{display:none}
+details.week summary .wt{flex:1}
+details.week summary b{display:block;font-size:17px}
+details.week summary span{font-size:13px;color:var(--muted)}
+details.week summary .cnt{font-size:13px;font-weight:600;color:var(--muted);background:var(--card2);padding:3px 9px;border-radius:99px}
+details.week summary .chev{color:var(--muted);transition:transform .2s}
+details.week[open] summary .chev{transform:rotate(90deg)}
+.prow{display:grid;grid-template-columns:44px 1fr auto 26px;align-items:center;gap:10px;width:100%;border:0;border-top:1px solid var(--line);background:none;padding:10px 16px;text-align:left}
+.prow .pd{font-size:12px;color:var(--muted);text-align:center;line-height:1.1}
+.prow .pd b{display:block;font-size:17px;color:var(--text)}
+.prow .pt{display:flex;align-items:center;gap:8px;font-weight:600}
+.prow .pr{color:var(--muted);font-variant-numeric:tabular-nums;font-size:15px;white-space:nowrap}
+.prow .pt small{display:block;font-weight:400;font-size:12px}
+.prow .pt .ptn{line-height:1.2}
+body.timing .app{padding-bottom:calc(env(safe-area-inset-bottom) + 180px)}
+.prow .ps{color:var(--good);display:grid;place-items:center}
+.prow .ps svg{width:20px;height:20px}
+.prow.istoday{background:var(--card2)}
+.prow.istoday .pd b{color:var(--accent)}
+/* progress */
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center}
+.stats div b{display:block;font-size:30px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stats div span{font-size:12px;color:var(--muted)}
+.bar{height:10px;border-radius:99px;background:var(--card2);overflow:hidden;margin-top:12px}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 4px;border-top:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:600;border-top:0}
+td small{color:var(--muted)}
+.ok{color:var(--good);font-weight:600}
+.hold{color:var(--accent);font-weight:600}
+.muted{color:var(--muted)}
+.list{margin:0;padding:0;list-style:none}
+.list li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:15px}
+.list li:first-child{border-top:0}
+.toggle{display:flex;align-items:center;justify-content:space-between;padding:6px 0 12px}
+.toggle input{width:22px;height:22px}
+.why p,.why li{color:var(--muted);font-size:15px}
+.why ul{padding-left:20px;margin:6px 0}
+/* tabs */
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;background:color-mix(in srgb,var(--bg) 85%,transparent);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-top:1px solid var(--line);padding:6px 8px calc(env(safe-area-inset-bottom) + 6px);z-index:10}
+.tabs button{flex:1;max-width:180px;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:600;color:var(--muted);padding:4px 0}
+.tabs button svg{width:26px;height:26px}
+.tabs button.on{color:var(--accent)}
+/* timer */
+.timer{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom) + 72px);max-width:536px;margin:0 auto;background:var(--text);color:var(--bg);border-radius:22px;padding:12px 14px;display:flex;align-items:center;gap:14px;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.timer[hidden]{display:none}
+.ring{position:relative;width:60px;height:60px;flex:none}
+.ring svg{width:60px;height:60px;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:8}
+.ring .trk{stroke:color-mix(in srgb,var(--bg) 25%,transparent)}
+.ring .arc{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .25s linear}
+.timer .tt{position:absolute;inset:0;display:grid;place-items:center;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.timer .tinfo{flex:1;line-height:1.2}
+.timer .tinfo b{font-size:17px;display:block}
+.timer .tinfo span{font-size:13px;opacity:.7}
+.timer button{border:0;border-radius:12px;padding:10px 12px;font-weight:700;background:color-mix(in srgb,var(--bg) 18%,transparent);color:var(--bg)}
+.timer.go{background:var(--good);color:#fff}
+.timer.go button{color:#fff;background:rgba(255,255,255,.2)}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+.set.just .check{animation:pop .3s ease}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top" id="top"></header>
+  <main id="view"></main>
+</div>
+
+<nav class="tabs" aria-label="Sections">
+  <button data-tab="today" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/><circle cx="12" cy="15" r="2" fill="currentColor"/></svg>Today</button>
+  <button data-tab="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1.2" fill="currentColor"/><circle cx="3.5" cy="12" r="1.2" fill="currentColor"/><circle cx="3.5" cy="18" r="1.2" fill="currentColor"/></svg>Plan</button>
+  <button data-tab="progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M6 16v-4M11 16V8M16 16v-6M21 16V4"/></svg>Progress</button>
+</nav>
+
+<div class="timer" id="timer" hidden role="timer" aria-live="polite">
+  <div class="ring">
+    <svg viewBox="0 0 60 60"><circle class="trk" cx="30" cy="30" r="25"/><circle class="arc" id="arc" cx="30" cy="30" r="25"/></svg>
+    <div class="tt" id="tt">2:30</div>
+  </div>
+  <div class="tinfo"><b id="tlabel">Rest</b><span id="tsub">Next: set 2</span></div>
+  <button id="tplus">+30s</button>
+  <button id="tskip">Skip</button>
+</div>
+
+<script>
+'use strict';
+/* ---------- storage ---------- */
+const LS_KEY = 'pushups.v1';
+const DEFAULTS = { start: '2026-11-16', volBase: 25, endBase: 30, baseline: 45, sound: true };
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
+    if (s && s.settings && s.log) return { settings: { ...DEFAULTS, ...s.settings }, log: s.log };
+  } catch (e) {}
+  return { settings: { ...DEFAULTS }, log: {} };
+}
+let state = load();
+function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {} }
+const S = () => state.settings;
+
+/* ---------- dates (local calendar days) ---------- */
+const DAY = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const DAY3 = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTH = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const pad = n => String(n).padStart(2, '0');
+const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const parse = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return iso(d); };
+const utc = s => { const d = parse(s); return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()); };
+const diff = (a, b) => Math.round((utc(b) - utc(a)) / 864e5); // days from a to b
+const dow = s => (parse(s).getDay() + 6) % 7; // Mon = 0
+const todayISO = () => iso(new Date());
+const short = s => { const d = parse(s); return MON[d.getMonth()] + ' ' + d.getDate(); };
+const long = s => { const d = parse(s); return MONTH[d.getMonth()] + ' ' + d.getDate(); };
+const nextMonday = s => addDays(s, (7 - dow(s)) % 7);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+/* ---------- the plan ---------- */
+const WEEKS = 6, DAYS = WEEKS * 7;
+const TYPES = {
+  strength: { name: 'Strength', sets: 4, lo: 6, hi: 10, rest: 150, restTxt: 'Rest 2–3 min',
+    how: 'A harder push-up: weighted, feet-elevated, or another variation where 6–10 controlled reps is tough. Stop each set with 1–3 good reps left.' },
+  volume: { name: 'Volume', sets: 3, rest: 150, restTxt: 'Rest 2–3 min',
+    how: 'Standard push-ups. Hit the target on every set and stop there, even if you have more in the tank.' },
+  endurance: { name: 'Endurance', sets: 2, rest: 180, restTxt: 'Rest 3 min',
+    how: 'Standard push-ups. Leave 2–4 reps in reserve on each set. No grinding to failure.' },
+  easy: { name: 'Easy practice', sets: 1, how: 'Comfortable reps that keep the habit going. Nowhere near failure.' },
+  test: { name: 'Max test', sets: 1, how: 'Warm up, then one set to your max. Same form and pace as always: full range, chest to the floor, about 2–3 seconds a rep.' },
+  rest: { name: 'Rest', sets: 0, how: 'No push-ups today. Recovery is part of the plan.' },
+};
+const WEEK_NOTES = ['Learn the routine', 'Same targets, solid form', 'Reps go up · test Friday', 'Reps go up', 'Last build week', 'Taper · final test Friday'];
+
+function rawSession(week, d) {
+  if (week === 6) return [
+    { type: 'strength', sets: 2, lo: 6, hi: 8, how: 'Taper week: half the usual sets of your harder variation. Stay well short of failure.' },
+    { type: 'easy', target: 15, how: 'Taper week: one short, easy set.' },
+    { type: 'easy', target: 15, how: 'Taper week: one short, easy set.' },
+    { type: 'rest', how: 'Full rest so you’re fresh for tomorrow’s test.' },
+    { type: 'test', final: true },
+    { type: 'rest', how: 'Rest. The six weeks are done.' },
+    { type: 'rest' },
+  ][d];
+  if (week === 3 && d === 3) return { type: 'rest', how: 'Rest today so you’re fresh for tomorrow’s test.' };
+  if (week === 3 && d === 4) return { type: 'test' };
+  return [
+    { type: 'strength' },
+    { type: 'easy', target: 25 },
+    { type: 'volume' },
+    { type: 'easy', target: 25, how: 'Keep the effort low. Relaxed and controlled.' },
+    { type: 'endurance' },
+    { type: 'easy', target: 20, hi: 25, optional: true, how: 'Optional. Do it if you feel recovered; skip it if you’re sore.' },
+    { type: 'rest' },
+  ][d];
+}
+const dateOf = (week, d) => addDays(S().start, (week - 1) * 7 + d);
+
+// A session "succeeded" if every set was checked off at or above target. No log = assume it went fine.
+function sessionOk(e, target) {
+  if (!e) return true;
+  if (e.skipped) return false;
+  return Array.isArray(e.reps) && e.reps.length > 0 && e.done.every(Boolean) && e.reps.every(r => r >= target);
+}
+// Weeks 1–2 hold the base. Weeks 3–5 add 1 rep per set if last time's session went fully to plan.
+function progTargets(type) {
+  const base = type === 'volume' ? S().volBase : S().endBase;
+  const d = type === 'volume' ? 2 : 4;
+  const m = {}; let last = null, lastW = null;
+  for (let w = 1; w <= WEEKS; w++) {
+    if (rawSession(w, d).type !== type) continue;
+    let t;
+    if (last == null) t = base;
+    else if (w >= 3) t = sessionOk(state.log[dateOf(lastW, d)], last) ? last + 1 : last;
+    else t = last;
+    m[w] = { t, prev: last }; last = t; lastW = w;
+  }
+  return m;
+}
+function session(week, d) {
+  const r = rawSession(week, d);
+  const s = { ...TYPES[r.type], ...r };
+  if (r.type === 'volume' || r.type === 'endurance') {
+    const p = progTargets(r.type)[week];
+    s.target = p.t; s.prev = p.prev;
+  }
+  return s;
+}
+function planFor(ds) {
+  const idx = diff(S().start, ds);
+  if (idx < 0) return { kind: 'before', idx };
+  if (idx >= DAYS) return { kind: 'after', idx };
+  const week = Math.floor(idx / 7) + 1, d = idx % 7;
+  return { kind: 'day', idx, week, d, s: session(week, d) };
+}
+function repsText(s) {
+  if (s.type === 'rest') return '0';
+  if (s.type === 'test') return 'Max';
+  const r = s.lo ? `${s.lo}–${s.hi}` : (s.hi ? `${s.target}–${s.hi}` : s.target);
+  return `${s.sets} × ${r}`;
+}
+const color = t => `var(--c-${t})`;
+
+/* ---------- log entries ---------- */
+function lastStrength(before) {
+  const keys = Object.keys(state.log).filter(k => k < before && state.log[k].type === 'strength').sort();
+  return keys.length ? state.log[keys[keys.length - 1]] : null;
+}
+function defaultReps(s, ds) {
+  if (s.type === 'strength') {
+    const prev = lastStrength(ds);
+    return Array.from({ length: s.sets }, (_, i) => (prev && prev.reps[i] != null ? prev.reps[i] : 8));
+  }
+  return Array.from({ length: s.sets }, () => s.target);
+}
+function entryFor(ds, s, create) {
+  let e = state.log[ds];
+  if (!e && !create) return null;
+  if (!e) {
+    e = state.log[ds] = { type: s.type, reps: defaultReps(s, ds), done: Array(s.sets).fill(false) };
+    if (s.type === 'strength') { const p = lastStrength(ds); if (p && p.variation) e.variation = p.variation; }
+  }
+  return e;
+}
+const isDone = e => !!e && !e.skipped && Array.isArray(e.done) && e.done.length > 0 && e.done.every(Boolean);
+function tests() {
+  return Object.keys(state.log).filter(k => state.log[k].type === 'test' && state.log[k].max != null).sort()
+    .map(k => ({ date: k, max: state.log[k].max }));
+}
+
+/* ---------- ui state ---------- */
+let ui = { tab: 'today', date: todayISO(), follow: true, just: null };
+const $ = s => document.querySelector(s);
+const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+function render() {
+  document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === ui.tab));
+  if (ui.tab === 'today') renderToday();
+  else if (ui.tab === 'plan') renderPlan();
+  else renderProgress();
+  ui.just = null;
+}
+
+/* ---------- Today ---------- */
+function renderToday() {
+  const ds = ui.date, t = todayISO();
+  const d = parse(ds);
+  const rel = ds === t ? 'Today' : ds === addDays(t, 1) ? 'Tomorrow' : ds === addDays(t, -1) ? 'Yesterday' : d.getFullYear() !== new Date().getFullYear() ? String(d.getFullYear()) : '';
+  $('#top').innerHTML = `
+    <div class="datenav">
+      <button class="iconbtn" data-go="${addDays(ds, -1)}" aria-label="Previous day">‹</button>
+      <div class="dt"><b>${DAY[dow(ds)]}</b><span>${long(ds)}${rel ? ' · ' + rel : ''}</span></div>
+      <button class="iconbtn" data-go="${addDays(ds, 1)}" aria-label="Next day">›</button>
+    </div>
+    ${ds !== t ? `<button class="pill" data-go="${t}">Today</button>` : ''}`;
+
+  const p = planFor(ds);
+  let h = '';
+  if (p.kind === 'before') {
+    const n = -p.idx, st = S().start;
+    h += `<section class="card session" style="--tc:var(--accent)">
+      <div class="eyebrow">Six weeks to 50</div>
+      <h1>Starts ${dow(st) === 0 ? 'Monday' : DAY[dow(st)]}, ${long(st)}</h1>
+      <div class="big">${n} <small>day${n === 1 ? '' : 's'} to go</small></div>
+      <p class="how">Until then, do an easy set or rest. Don’t go for a max in the days before you start.</p>
+      <button class="btn" data-go="${st}">Preview day 1</button>
+    </section>`;
+    h += weekStrip(st, ds, 'Week 1');
+    h += whyCard();
+  } else if (p.kind === 'after') {
+    h += afterCard();
+  } else {
+    h += sessionCard(p, ds);
+    h += logCard(p, ds);
+    h += weekStrip(dateOf(p.week, 0), ds, `Week ${p.week}`);
+  }
+  $('#view').innerHTML = h;
+}
+
+function sessionCard(p, ds) {
+  const s = p.s;
+  const chips = [];
+  if (s.restTxt && s.sets > 1) chips.push(`<span class="chip">${s.restTxt}</span>`);
+  if (s.prev != null) {
+    if (s.target > s.prev) chips.push(`<span class="chip up">+${s.target - s.prev} rep${s.target - s.prev > 1 ? 's' : ''} per set from last week</span>`);
+    else if (p.week >= 3) chips.push(`<span class="chip">Holding at ${s.target}: finish every set to move up</span>`);
+  }
+  if (s.optional) chips.push('<span class="chip">Optional</span>');
+  if (s.type === 'test') chips.push('<span class="chip">Goal: 50</span>');
+  if (s.type === 'easy' && s.hi) chips.push(`<span class="chip">Up to ${s.hi} if it feels easy</span>`);
+  return `<section class="card session" style="--tc:${color(s.type)}">
+    <div class="eyebrow">Week ${p.week} of ${WEEKS} · Day ${p.idx + 1}</div>
+    <h1>${s.name}${s.final ? ': final' : ''}</h1>
+    <div class="big">${s.type === 'rest' ? 'Rest' : s.type === 'test' ? 'One max set' : esc(repsText(s))}</div>
+    <p class="how">${esc(s.how)}</p>
+    ${chips.length ? `<div class="chips">${chips.join('')}</div>` : ''}
+  </section>`;
+}
+
+function logCard(p, ds) {
+  const s = p.s;
+  if (s.type === 'rest') {
+    const next = nextWorkout(ds);
+    return next ? `<section class="card"><h3>Next up</h3><p class="how">${DAY[dow(next.ds)]}, ${short(next.ds)}: <b style="color:${color(next.s.type)}">${next.s.name}</b> · ${esc(repsText(next.s))}</p>
+      <button class="linkbtn" data-go="${next.ds}">See it ›</button></section>` : '';
+  }
+  const e = entryFor(ds, s, false);
+  if (s.type === 'test') {
+    const prior = tests().filter(x => x.date < ds);
+    const best = Math.max(S().baseline, ...prior.map(x => x.max));
+    const val = e && e.max != null ? e.max : '';
+    let res = '';
+    if (e && e.max != null) {
+      res = e.max >= 50 ? `<div class="donebar">${CHECK}50! You hit your goal.</div>`
+        : e.max > best ? `<div class="donebar">${CHECK}New best: ${e.max}, up from ${best}.</div>`
+        : `<div class="donebar">${CHECK}Logged ${e.max}. ${p.week < 6 ? 'Keep building: the final test is in week 6.' : 'Logged.'}</div>`;
+    }
+    return `<section class="card"><h3>Your result</h3>
+      <div class="testin"><input id="maxin" type="number" inputmode="numeric" min="0" max="200" placeholder="0" value="${val}" aria-label="Push-ups in your max set">
+      <button class="btn" data-act="savetest">Save</button></div>
+      <p class="note">Best before this: ${best}${prior.length ? '' : ' (your pre-plan max)'}. ${p.week === 3 ? 'This mid-point test shows whether the plan is working. Don’t chase a max again until week 6.' : ''}</p>
+      ${res}
+      ${noteField(e)}
+    </section>`;
+  }
+  const reps = e ? e.reps : defaultReps(s, ds);
+  const done = e ? e.done : Array(s.sets).fill(false);
+  let rows = '';
+  for (let i = 0; i < s.sets; i++) {
+    const sub = s.type === 'strength' ? `target ${s.lo}–${s.hi}` : s.type === 'easy' ? 'one set' : `target ${s.target}`;
+    rows += `<div class="set ${done[i] ? 'done' : ''} ${ui.just === i ? 'just' : ''}">
+      <span class="lbl">${s.sets > 1 ? 'Set ' + (i + 1) : 'Your set'}<small>${sub}</small></span>
+      <div class="stepper"><button data-act="dec" data-i="${i}" aria-label="One fewer">−</button><span class="val">${reps[i]}</span><button data-act="inc" data-i="${i}" aria-label="One more">+</button></div>
+      <button class="check" data-act="check" data-i="${i}" aria-label="Mark ${s.sets > 1 ? 'set ' + (i + 1) : 'set'} done">${CHECK}</button>
+    </div>`;
+  }
+  let foot = '';
+  if (isDone(e)) {
+    const total = e.reps.reduce((a, b) => a + b, 0);
+    foot = `<div class="donebar">${CHECK}Done · ${total} push-ups${s.type === 'volume' || s.type === 'endurance' ? (sessionOk(e, s.target) ? '. Next week’s target goes up if it’s a build week.' : '. Some sets came in under target, so next week holds steady.') : ''}</div>`;
+  } else if (e && e.skipped) {
+    foot = `<div class="donebar" style="background:var(--card2);color:var(--muted)">Skipped today.</div><button class="linkbtn" data-act="skip">Undo skip</button>`;
+  } else if (s.optional) {
+    foot = `<button class="linkbtn" data-act="skip">Skip today</button>`;
+  }
+  return `<section class="card sets">
+    <h3>Log it</h3>
+    ${s.type === 'strength' ? `<label class="field"><span>Variation</span><input id="varin" placeholder="e.g. feet on a chair, 10 lb vest" value="${esc(e && e.variation || '')}"></label>` : ''}
+    ${rows}
+    ${foot}
+    ${noteField(e)}
+  </section>`;
+}
+const noteField = e => `<label class="field" style="margin:12px 0 0"><span>Notes</span><input id="notein" placeholder="How did it feel?" value="${esc(e && e.note || '')}"></label>`;
+
+function nextWorkout(ds) {
+  for (let i = 1; i <= 7; i++) {
+    const n = addDays(ds, i), p = planFor(n);
+    if (p.kind === 'day' && p.s.type !== 'rest') return { ds: n, s: p.s };
+    if (p.kind === 'after') return null;
+  }
+  return null;
+}
+
+function weekStrip(mon, sel, title = 'This week') {
+  const t = todayISO();
+  let h = '';
+  for (let i = 0; i < 7; i++) {
+    const ds = addDays(mon, i), p = planFor(ds);
+    let bub;
+    if (p.kind !== 'day') bub = `<span class="bub restb">·</span>`;
+    else if (p.s.type === 'rest') bub = `<span class="bub restb">R</span>`;
+    else {
+      const e = state.log[ds], done = isDone(e) || (p.s.type === 'test' && e && e.max != null);
+      const letter = { strength: 'S', volume: 'V', endurance: 'E', easy: 'e', test: 'T' }[p.s.type];
+      bub = `<span class="bub ${done ? 'fill' : ''}" style="--tc:${color(p.s.type)}">${done ? '✓' : letter}</span>`;
+    }
+    h += `<button data-go="${ds}" class="${ds === sel ? 'sel' : ''} ${ds === t ? 'today' : ''}"><span class="d">${DAY3[i][0]}</span>${bub}<span>${parse(ds).getDate()}</span></button>`;
+  }
+  return `<section class="card"><h3>${title}</h3><div class="strip">${h}</div></section>`;
+}
+
+function afterCard() {
+  const ts = tests(), last = ts[ts.length - 1];
+  const nm = nextMonday(todayISO());
+  const v = progTargets('volume'), en = progTargets('endurance');
+  const nv = v[5].t, ne = en[5].t;
+  return `<section class="card session" style="--tc:var(--accent)">
+    <div class="eyebrow">Six weeks complete</div>
+    <h1>Nice work.</h1>
+    <div class="big">${last ? last.max : '—'} <small>${last ? 'in your last test' : 'no test logged'}</small></div>
+    <p class="how">${last && last.max >= 50 ? 'You reached 50. Run another cycle to lock it in, or set a new goal.' : 'Run another cycle starting from where this one ended.'}</p>
+    <button class="btn" data-act="restart" data-start="${nm}" data-v="${nv}" data-e="${ne}">Start 6 more weeks on ${DAY[dow(nm)]}, ${short(nm)}</button>
+    <p class="note">The new cycle starts at ${nv} reps per set on volume days and ${ne} on endurance days. You can change these under Progress → Settings.</p>
+  </section>`;
+}
+
+function whyCard() {
+  return `<section class="card why"><h3>How the plan works</h3>
+    <ul>
+      <li><b>Three hard days, three easy days.</b> Strength on Monday, volume on Wednesday, endurance on Friday. Easy sets on Tuesday, Thursday and Saturday keep your daily habit without the fatigue. Sunday is off.</li>
+      <li><b>No training to failure.</b> Every set stops short, with reps left in reserve.</li>
+      <li><b>Small, steady increases.</b> Weeks 1–2 hold the targets. In weeks 3–5, volume and endurance sets go up by one rep a week, but only after you finish every set of the last one.</li>
+      <li><b>Test only twice.</b> A max test at the end of week 3, and a final one after the week 6 taper.</li>
+      <li><b>Same form every time.</b> Full range, same pace (about 2–3 seconds a rep).</li>
+    </ul></section>`;
+}
+
+/* ---------- Plan ---------- */
+function renderPlan() {
+  $('#top').innerHTML = `<h2>Plan</h2><span class="muted" style="font-size:14px">${short(S().start)} – ${short(addDays(S().start, DAYS - 1))}</span>`;
+  const t = todayISO(), tp = planFor(t);
+  const curWeek = tp.kind === 'day' ? tp.week : tp.kind === 'before' ? 1 : WEEKS;
+  let h = '';
+  for (let w = 1; w <= WEEKS; w++) {
+    let rows = '', nWork = 0, nDone = 0;
+    for (let d = 0; d < 7; d++) {
+      const ds = dateOf(w, d), s = session(w, d), e = state.log[ds];
+      const done = s.type === 'test' ? !!(e && e.max != null) : isDone(e);
+      if (s.type !== 'rest' && !s.optional) { nWork++; if (done) nDone++; }
+      const right = s.type === 'rest' ? '—' : s.type === 'test' ? (e && e.max != null ? e.max + ' reps' : 'Max') : esc(repsText(s));
+      rows += `<button class="prow ${ds === t ? 'istoday' : ''}" data-go="${ds}" data-tabgo="today">
+        <span class="pd">${DAY3[d]}<b>${parse(ds).getDate()}</b></span>
+        <span class="pt" style="--tc:${color(s.type)}"><span class="dot"></span><span class="ptn">${s.name}${s.optional ? '<small class="muted">optional</small>' : ''}</span></span>
+        <span class="pr">${right}</span>
+        <span class="ps">${done ? CHECK : e && e.skipped ? '<small class="muted">skip</small>' : ''}</span>
+      </button>`;
+    }
+    h += `<details class="card week" ${w === curWeek ? 'open' : ''}>
+      <summary><span class="wt"><b>Week ${w}</b><span>${short(dateOf(w, 0))}–${short(dateOf(w, 6))} · ${WEEK_NOTES[w - 1]}</span></span>
+      <span class="cnt">${nDone}/${nWork}</span><span class="chev">›</span></summary>
+      ${rows}
+    </details>`;
+  }
+  h += whyCard();
+  $('#view').innerHTML = h;
+}
+
+/* ---------- Progress ---------- */
+function renderProgress() {
+  $('#top').innerHTML = `<h2>Progress</h2>`;
+  const t = todayISO(), ts = tests();
+  const best = ts.length ? Math.max(...ts.map(x => x.max)) : null;
+  const start = S().start;
+  // consistency so far
+  let due = 0, done = 0;
+  for (let i = 0; i < DAYS; i++) {
+    const ds = addDays(start, i);
+    if (ds > t) break;
+    const p = planFor(ds), e = state.log[ds];
+    if (p.s.type === 'rest' || (p.s.optional && !isDone(e))) continue;
+    if (ds === t && !isDone(e) && !(e && e.max != null)) continue;
+    due++;
+    if (isDone(e) || (p.s.type === 'test' && e && e.max != null)) done++;
+  }
+  const dayN = Math.min(Math.max(diff(start, t) + 1, 0), DAYS);
+  const shown = best ?? S().baseline;
+  let h = `<section class="card">
+    <div class="stats">
+      <div><b>${S().baseline}</b><span>Before the plan</span></div>
+      <div><b style="color:var(--accent)">${best ?? '—'}</b><span>Best test</span></div>
+      <div><b>50</b><span>Goal</span></div>
+    </div>
+    <div class="bar"><i style="width:${Math.min(100, shown / 50 * 100)}%"></i></div>
+    ${ts.length ? `<ul class="list" style="margin-top:12px">${ts.map(x => `<li><span>${DAY3[dow(x.date)]}, ${short(x.date)}</span><b>${x.max}</b></li>`).join('')}</ul>` : `<p class="note">Max tests are on Friday of week 3 (${short(dateOf(3, 4))}) and Friday of week 6 (${short(dateOf(6, 4))}).</p>`}
+  </section>`;
+  h += `<section class="card"><h3>Consistency</h3>
+    <div class="stats" style="grid-template-columns:1fr 1fr">
+      <div><b>${done}<span class="muted" style="font-size:18px">/${due}</span></b><span>Workouts done so far</span></div>
+      <div><b>${dayN}<span class="muted" style="font-size:18px">/${DAYS}</span></b><span>Days into the plan</span></div>
+    </div>
+    <div class="bar"><i style="width:${dayN / DAYS * 100}%;background:var(--good)"></i></div>
+  </section>`;
+  // targets table
+  const v = progTargets('volume'), en = progTargets('endurance');
+  const cell = (m, w, d) => {
+    if (!m[w]) return '<span class="muted">test / taper</span>';
+    const e = state.log[dateOf(w, d)];
+    const did = e && e.reps && e.done.some(Boolean) ? `<br><small>did ${e.reps.filter((_, i) => e.done[i]).join(', ')}</small>` : '';
+    return `<b>${m[w].t}</b>${did}`;
+  };
+  let rows = '';
+  for (let w = 1; w <= WEEKS; w++) rows += `<tr><td>${w}</td><td>${cell(v, w, 2)}</td><td>${cell(en, w, 4)}</td></tr>`;
+  h += `<section class="card"><h3>Rep targets per set</h3>
+    <table><tr><th>Week</th><th>Wed volume (3 sets)</th><th>Fri endurance (2 sets)</th></tr>${rows}</table>
+    <p class="note">Targets for later weeks assume you finish every set. Miss one and that target holds for another week.</p>
+  </section>`;
+  // strength log
+  const sl = Object.keys(state.log).filter(k => state.log[k].type === 'strength' && state.log[k].done.some(Boolean)).sort().reverse();
+  h += `<section class="card"><h3>Strength days</h3>${sl.length ? `<ul class="list">${sl.map(k => { const e = state.log[k]; return `<li><span>${short(k)} · ${esc(e.variation || 'variation not noted')}</span><span class="muted">${e.reps.filter((_, i) => e.done[i]).join(' · ')}</span></li>`; }).join('')}</ul>` : '<p class="note" style="margin:0">Log your Monday sets and the variation you used. When 10 reps gets easy, make the variation harder.</p>'}</section>`;
+  // settings
+  h += `<section class="card"><h3>Settings</h3>
+    <label class="field"><span>Start date (a Monday)</span><input type="date" id="set-start" value="${S().start}"></label>
+    ${dow(S().start) !== 0 ? '<p class="note" style="margin-top:-6px">That date isn’t a Monday, so workouts will fall on different weekdays.</p>' : ''}
+    <div class="row2">
+      <label class="field"><span>Volume reps, weeks 1–2</span><input type="number" inputmode="numeric" id="set-vol" value="${S().volBase}"></label>
+      <label class="field"><span>Endurance reps, weeks 1–2</span><input type="number" inputmode="numeric" id="set-end" value="${S().endBase}"></label>
+    </div>
+    <label class="field"><span>Your max before the plan</span><input type="number" inputmode="numeric" id="set-base" value="${S().baseline}"></label>
+    <label class="toggle"><span>Beep when rest is over</span><input type="checkbox" id="set-sound" ${S().sound ? 'checked' : ''}></label>
+  </section>`;
+  // backup
+  h += `<section class="card"><h3>Backup</h3>
+    <p class="note" style="margin-top:0">Your log is saved on this phone only. Clearing Safari’s website data erases it, so copy a backup now and then (paste it into Notes).</p>
+    <button class="btn sec" data-act="export">Copy backup</button>
+    <label class="field" style="margin-top:12px"><span>Restore: paste a backup here</span><textarea id="importtxt" placeholder="{&quot;settings&quot;: …}"></textarea></label>
+    <button class="btn sec" data-act="import">Restore backup</button>
+    <button class="btn danger" data-act="reset" style="margin-top:16px">Erase all data</button>
+  </section>`;
+  if (!navigator.standalone && !matchMedia('(display-mode: standalone)').matches) {
+    h += `<section class="card"><h3>Put it on your home screen</h3><p class="how">In Safari, tap the Share button, then <b>Add to Home Screen</b>. It opens full screen like an app and works offline.</p></section>`;
+  }
+  $('#view').innerHTML = h;
+}
+
+/* ---------- actions ---------- */
+document.addEventListener('click', ev => {
+  unlockAudio();
+  const tab = ev.target.closest('.tabs button');
+  if (tab) { ui.tab = tab.dataset.tab; if (ui.tab === 'today' && ui.follow) ui.date = todayISO(); render(); scrollTo(0, 0); return; }
+  const go = ev.target.closest('[data-go]');
+  if (go) { ui.date = go.dataset.go; ui.follow = ui.date === todayISO(); if (go.dataset.tabgo || ui.tab !== 'today') ui.tab = 'today'; render(); scrollTo(0, 0); return; }
+  const a = ev.target.closest('[data-act]');
+  if (!a) return;
+  const act = a.dataset.act, i = +a.dataset.i;
+  const p = planFor(ui.date);
+  if (act === 'restart') {
+    if (!confirm(`Start a new 6-week cycle on ${short(a.dataset.start)}? Your log stays.`)) return;
+    Object.assign(S(), { start: a.dataset.start, volBase: +a.dataset.v, endBase: +a.dataset.e });
+    save(); ui.date = todayISO(); render(); return;
+  }
+  if (act === 'export') { exportData(a); return; }
+  if (act === 'import') { importData(); return; }
+  if (act === 'reset') {
+    if (!confirm('Erase your whole log and settings? This can’t be undone.')) return;
+    state = { settings: { ...DEFAULTS }, log: {} }; save(); render(); return;
+  }
+  if (p.kind !== 'day') return;
+  const s = p.s, ds = ui.date;
+  if (act === 'savetest') {
+    const n = parseInt($('#maxin').value, 10);
+    if (!(n >= 0)) { $('#maxin').focus(); return; }
+    const e = entryFor(ds, s, true); e.max = n; e.reps = [n]; e.done = [true];
+    save(); render(); return;
+  }
+  const e = entryFor(ds, s, true);
+  if (act === 'inc' || act === 'dec') {
+    e.reps[i] = Math.max(0, Math.min(200, e.reps[i] + (act === 'inc' ? 1 : -1)));
+  } else if (act === 'check') {
+    e.done[i] = !e.done[i];
+    e.skipped = false;
+    if (e.done[i]) {
+      ui.just = i;
+      const left = e.done.filter(x => !x).length;
+      if (left > 0 && s.rest) startTimer(s.rest, `Next: set ${e.done.indexOf(false) + 1}`);
+      else stopTimer();
+      if (!left) e.at = Date.now();
+    }
+  } else if (act === 'skip') {
+    e.skipped = !e.skipped;
+    if (e.skipped) e.done = e.done.map(() => false);
+  }
+  save(); render();
+});
+
+document.addEventListener('change', ev => {
+  const id = ev.target.id;
+  if (id === 'varin' || id === 'notein') {
+    const p = planFor(ui.date); if (p.kind !== 'day') return;
+    const e = entryFor(ui.date, p.s, true);
+    e[id === 'varin' ? 'variation' : 'note'] = ev.target.value.trim();
+    save(); return;
+  }
+  const map = { 'set-start': 'start', 'set-vol': 'volBase', 'set-end': 'endBase', 'set-base': 'baseline', 'set-sound': 'sound' };
+  if (map[id]) {
+    let v = ev.target.type === 'checkbox' ? ev.target.checked : ev.target.value;
+    if (ev.target.type === 'number') { v = parseInt(v, 10); if (!(v > 0)) { render(); return; } }
+    if (id === 'set-start' && !/^\d{4}-\d{2}-\d{2}$/.test(v)) { render(); return; }
+    S()[map[id]] = v; save(); render();
+  }
+});
+
+async function exportData(btn) {
+  const txt = JSON.stringify(state);
+  $('#importtxt').value = txt;
+  try { await navigator.clipboard.writeText(txt); btn.textContent = 'Copied. Paste it into Notes.'; }
+  catch (e) { $('#importtxt').select(); btn.textContent = 'Select the text below and copy it'; }
+}
+function importData() {
+  try {
+    const s = JSON.parse($('#importtxt').value);
+    if (!s || !s.settings || !s.log) throw 0;
+    if (!confirm('Replace your current log with this backup?')) return;
+    state = { settings: { ...DEFAULTS, ...s.settings }, log: s.log }; save(); render();
+    alert('Backup restored.');
+  } catch (e) { alert('That doesn’t look like a Push-Ups backup.'); }
+}
+
+/* ---------- rest timer ---------- */
+const timer = { end: 0, total: 0, iv: null, lock: null };
+const C = 2 * Math.PI * 25;
+$('#arc').style.strokeDasharray = C;
+function startTimer(sec, sub) {
+  timer.total = sec; timer.end = Date.now() + sec * 1000;
+  $('#timer').classList.remove('go'); $('#tlabel').textContent = 'Rest'; $('#tsub').textContent = sub;
+  $('#timer').hidden = false; document.body.classList.add('timing');
+  clearInterval(timer.iv); timer.iv = setInterval(tick, 250); tick();
+  try { navigator.wakeLock && navigator.wakeLock.request('screen').then(l => timer.lock = l).catch(() => {}); } catch (e) {}
+}
+function tick() {
+  const left = Math.max(0, Math.ceil((timer.end - Date.now()) / 1000));
+  $('#tt').textContent = Math.floor(left / 60) + ':' + pad(left % 60);
+  $('#arc').style.strokeDashoffset = C * (1 - left / timer.total);
+  if (left <= 0) {
+    clearInterval(timer.iv); timer.iv = null;
+    $('#timer').classList.add('go'); $('#tlabel').textContent = 'Go!';
+    if (S().sound) beep();
+    setTimeout(() => { if (!timer.iv) stopTimer(); }, 8000);
+  }
+}
+function stopTimer() {
+  clearInterval(timer.iv); timer.iv = null; $('#timer').hidden = true; document.body.classList.remove('timing');
+  try { timer.lock && timer.lock.release(); } catch (e) {} timer.lock = null;
+}
+$('#tplus').addEventListener('click', e => { e.stopPropagation(); if (!timer.iv) { startTimer(30, $('#tsub').textContent); return; } timer.end += 30000; timer.total += 30; tick(); });
+$('#tskip').addEventListener('click', e => { e.stopPropagation(); stopTimer(); });
+
+let actx = null;
+function unlockAudio() {
+  if (actx) return;
+  try { actx = new (window.AudioContext || window.webkitAudioContext)(); const b = actx.createBuffer(1, 1, 22050), s = actx.createBufferSource(); s.buffer = b; s.connect(actx.destination); s.start(0); } catch (e) { actx = null; }
+}
+function beep() {
+  if (!actx) return;
+  try {
+    actx.resume && actx.resume();
+    [0, .25, .5].forEach((o, k) => {
+      const t0 = actx.currentTime + o, osc = actx.createOscillator(), g = actx.createGain();
+      osc.frequency.value = k === 2 ? 1320 : 880; osc.connect(g); g.connect(actx.destination);
+      g.gain.setValueAtTime(.0001, t0); g.gain.exponentialRampToValueAtTime(.4, t0 + .02); g.gain.exponentialRampToValueAtTime(.0001, t0 + .18);
+      osc.start(t0); osc.stop(t0 + .2);
+    });
+  } catch (e) {}
+  try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (e) {}
+}
+
+/* ---------- keep "today" current ---------- */
+let lastDay = todayISO();
+function refreshDay() {
+  const t = todayISO();
+  if (t !== lastDay) { if (ui.follow) ui.date = t; lastDay = t; render(); }
+  if (timer.iv) tick();
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshDay(); });
+setInterval(refreshDay, 60000);
+
+render();
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>
